@@ -1,0 +1,364 @@
+----S1----
+enable
+configure terminal
+hostname S1
+
+<Create Password Encrypted for Privileged EXEC Mode>
+enable secret 12345
+
+<Secure Console port>
+line console 0
+password 123456
+login local
+exit
+
+<Configure Domain Name, Username and Password for SSH>
+ip domain-name nti.com
+username admin secret 123
+crypto key generate rsa 
+<write> modulus: 1024
+
+<Activate 5 virtual ports, secure them and enable SSH>
+line vty 0 4
+password 123456
+login local
+transport input ssh
+exit
+
+<Encrypt all passwords>
+service password-encryption
+
+<Warning Message>
+banner motd # Unauthorized access is prohibited. #
+
+<Disable DNS lookup for unrecognized commands>
+no ip domain-lookup
+end
+
+<To save all configuration>
+copy running-config startup-config or wr
+
+reload
+
+<VLAN Configuration>
+enable
+configure terminal
+vlan 10
+name HR
+exit
+vlan 20
+name IT
+exit
+vlan 40
+name Native
+exit
+vlan 100
+name SVI-Management
+exit
+
+<Switch Port Access>
+interface range f0/1 - 10
+switchport mode access
+switchport access vlan 10
+exit
+interface range f0/11 - 24
+switchport mode access
+switchport access vlan 20
+exit
+
+<Switch Port Trunk>
+interface G0/1
+switchport mode trunk
+switchport trunk native vlan 40
+exit
+
+<Configure Management VLAN>
+interface Vlan 100
+ip address 192.168.100.2 255.255.255.248
+description MANAGEMENT INTERFACE
+no shutdown
+exit
+ip default-geteway 192.168.100.1
+end
+
+
+wr
+reload
+
+_____________________
+----S2----
+enable
+configure terminal
+hostname S2
+
+<Create Password Encrypted for Privileged EXEC Mode>
+enable secret 12345
+
+<Secure Console port>
+line console 0
+password 123456
+login local
+exit
+
+<Configure Domain Name, Username and Password for SSH>
+ip domain-name nti.com
+username admin secret 123
+crypto key generate rsa 
+<write> modulus: 1024
+
+<Activate 5 virtual ports, secure them and enable SSH>
+line vty 0 4
+password 123456
+login local
+transport input ssh
+exit
+
+<Encrypt all passwords>
+service password-encryption
+
+<Warning Message>
+banner motd # Unauthorized access is prohibited. #
+
+<Disable DNS lookup for unrecognized commands>
+no ip domain-lookup
+end
+
+<To save all configuration>
+copy running-config startup-config or wr
+
+reload
+
+_____________________
+R1
+enable
+configure terminal
+hostname R1
+
+<Create Password Encrypted for Privileged EXEC Mode>
+enable secret 12345
+
+<Secure Console port>
+line console 0
+password 123456
+login local
+exit
+
+<Configure Domain Name, Username and Password for SSH>
+ip domain-name nti.com
+username admin secret 123
+crypto key generate rsa 
+<write> modulus: 1024
+
+<Activate 5 virtual ports, secure them and enable SSH>
+line vty 0 4
+password 123456
+login local
+transport input ssh
+exit
+
+<Encrypt all passwords>
+service password-encryption
+
+<Warning Message>
+banner motd # Unauthorized access is prohibited. #
+
+<Disable DNS lookup for unrecognized commands>
+no ip domain-lookup
+end
+
+<To save all configuration>
+copy running-config startup-config or wr
+
+reload
+
+<Activate G0/0/0>
+enable
+configure Terminal
+interface G0/0/0
+no shutdown
+exit
+
+<Configure Sub-interfaces>
+interface G0/0/0.10
+encapsulation dot1Q 10
+ip address 192.168.10.1 255.255.255.0
+description HR-Department
+exit
+interface G0/0/0.20
+encapsulation dot1Q 20
+ip address 192.168.20.1 255.255.255.0
+description IT-Department
+exit
+interface G0/0/0.100
+encapsulation dot1Q 100
+ip address 192.168.100.1 255.255.255.248
+description SVI-Management
+exit
+
+<Assign IP for S0/1/0>
+interface S0/1/0
+ip address 192.168.12.1 255.255.255.252
+no shutdown
+exit
+end
+
+wr
+relaod
+
+<Static Route>
+enable
+configure Terminal
+ip route 200.0.0.0 255.255.255.0 S0/1/0
+ip route 192.168.23.0 255.255.255.252 S0/1/0
+ip route 192.168.30.0 255.255.255.0 S0/1/0
+end
+
+wr
+reload
+_____________________
+R2
+enable
+configure terminal
+hostname R2
+
+<Create Password Encrypted for Privileged EXEC Mode>
+enable secret 12345
+
+<Secure Console port>
+line console 0
+password 123456
+login local
+exit
+
+<Configure Domain Name, Username and Password for SSH>
+ip domain-name nti.com
+username admin secret 123
+crypto key generate rsa 
+<write> modulus: 1024
+
+<Activate 5 virtual ports, secure them and enable SSH>
+line vty 0 4
+password 123456
+login local
+transport input ssh
+exit
+
+<Encrypt all passwords>
+service password-encryption
+
+<Warning Message>
+banner motd # Unauthorized access is prohibited. #
+
+<Disable DNS lookup for unrecognized commands>
+no ip domain-lookup
+end
+
+<To save all configuration>
+copy running-config startup-config or wr
+
+reload
+
+<Configure Loopback>
+enable
+configure terminal
+interface loopback0
+ip address 200.0.0.1 255.255.255.0
+exit
+
+<Configure Interfaces>
+interface S0/1/1
+ip address 192.168.12.2 255.255.255.252
+no shutdown
+exit
+interface S0/2/0
+ip address 192.168.23.2 255.255.255.252
+no shutdown
+exit
+end
+
+wr
+reload
+
+<Static Route>
+enable
+configure Terminal
+ip route 192.168.20.0 255.255.255.0 S0/1/1
+ip route 192.168.10.0 255.255.255.0 S0/1/1
+ip route 192.168.100.0 255.255.255.248 S0/1/1
+ip route 192.168.30.0 255.255.255.0 S0/2/0
+end
+
+wr
+reload
+
+_____________________
+R3
+enable
+configure terminal
+hostname R3
+
+<Create Password Encrypted for Privileged EXEC Mode>
+enable secret 12345
+
+<Secure Console port>
+line console 0
+password 123456
+login local
+exit
+
+<Configure Domain Name, Username and Password for SSH>
+ip domain-name nti.com
+username admin secret 123
+crypto key generate rsa 
+<write> modulus: 1024
+
+<Activate 5 virtual ports, secure them and enable SSH>
+line vty 0 4
+password 123456
+login local
+transport input ssh
+exit
+
+<Encrypt all passwords>
+service password-encryption
+
+<Warning Message>
+banner motd # Unauthorized access is prohibited. #
+
+<Disable DNS lookup for unrecognized commands>
+no ip domain-lookup
+end
+
+<To save all configuration>
+copy running-config startup-config or wr
+
+reload
+
+<Configure Interfaces>
+enable
+configure terminal
+interface S0/2/0
+ip address 192.168.23.1 255.255.255.252
+no shutdown
+exit
+interface G0/0/0
+ip address 192.168.30.1 255.255.255.0
+no shutdown
+exit
+end
+
+wr
+reload
+
+<Static Route>
+enable
+configure Terminal
+ip route 192.168.20.0 255.255.255.0 S0/2/0
+ip route 192.168.10.0 255.255.255.0 S0/2/0
+ip route 192.168.100.0 255.255.255.248 S0/2/0
+ip route 192.168.12.0 255.255.255.252 S0/2/0
+ip route 200.0.0.0 255.255.255.0 S0/2/0
+end
+
+wr
+reload
